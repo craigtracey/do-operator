@@ -118,6 +118,7 @@ var _ = Describe("DatabaseCluster controller", func() {
 				Expect(secret.Data["uri"]).NotTo(BeEmpty())
 				Expect(secret.Data["username"]).NotTo(BeEmpty())
 				Expect(secret.Data["password"]).NotTo(BeEmpty())
+				Expect(secret.Data["ca.crt"]).NotTo(BeEmpty())
 			})
 
 			By("ensuring the DatabaseCluster status gets refreshed later", func() {
