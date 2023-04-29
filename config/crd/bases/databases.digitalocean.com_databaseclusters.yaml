@@ -48,6 +48,12 @@ spec:
           spec:
             description: DatabaseClusterSpec defines the desired state of DatabaseCluster
             properties:
+              databases:
+                description: Databases is a list of database names that should be
+                  created.
+                items:
+                  type: string
+                type: array
               engine:
                 description: Engine is the database engine to use.
                 type: string

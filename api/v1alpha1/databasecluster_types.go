@@ -36,6 +36,8 @@ type DatabaseClusterSpec struct {
 	Size string `json:"size"`
 	// Region is the slug of the DO region for the cluster.
 	Region string `json:"region"`
+	// Databases is a list of database names that should be created.
+	Databases []string `json:"databases,omitempty"`
 }
 
 // ToGodoCreateRequest returns a create request for a database that will fulfill

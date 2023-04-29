@@ -19,6 +19,7 @@ package controllers
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"time"
 
 	kerrors "k8s.io/apimachinery/pkg/api/errors"
@@ -164,6 +165,23 @@ func (r *DatabaseClusterReconciler) reconcileExistingDB(ctx context.Context, clu
 	if err != nil {
 		ll.Error(err, "unable to get existing database database CA")
 		return ctrl.Result{}, fmt.Errorf("getting existing database CA: %v", err)
+	}
+
+	for _, dbName := range db.DBNames {
+		_, resp, err := r.GodoClient.Databases.GetDB(ctx, db.ID, dbName)
+		if err != nil {
+			ll.Error(err, "unable to get database %v", err)
+			return ctrl.Result{}, fmt.Errorf("unable to get database: %v", err)
+		}
+		if resp.StatusCode == http.StatusNotFound {
+			_, _, err := r.GodoClient.Databases.CreateDB(ctx, db.ID, &godo.DatabaseCreateDBRequest{
+				Name: dbName,
+			})
+			if err != nil {
+				ll.Error(err, "unable to create database %v", err)
+				return ctrl.Result{}, fmt.Errorf("unable to create database: %v", err)
+			}
+		}
 	}
 
 	// Resize if either of the size parameters in the spec has changed.
